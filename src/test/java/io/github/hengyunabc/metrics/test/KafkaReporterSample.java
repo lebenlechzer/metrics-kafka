@@ -14,59 +14,55 @@ import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 
 import io.github.hengyunabc.metrics.KafkaReporter;
-import kafka.producer.ProducerConfig;
 
 public class KafkaReporterSample {
-	static final MetricRegistry metrics = new MetricRegistry();
-	static public Timer timer = new Timer();
+    static final MetricRegistry metrics = new MetricRegistry();
+    static public Timer timer = new Timer();
 
-	public static void main(String args[]) throws IOException,
-			InterruptedException {
-		ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics)
-				.convertRatesTo(TimeUnit.SECONDS)
-				.convertDurationsTo(TimeUnit.MILLISECONDS).build();
-		metrics.register("jvm.mem", new MemoryUsageGaugeSet());
-		metrics.register("jvm.gc", new GarbageCollectorMetricSet());
+    public static void main(String args[]) throws IOException, InterruptedException {
+        ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics).convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS).build();
+        metrics.register("jvm.mem", new MemoryUsageGaugeSet());
+        metrics.register("jvm.gc", new GarbageCollectorMetricSet());
 
-		final Histogram responseSizes = metrics.histogram("response-sizes");
-		final com.codahale.metrics.Timer metricsTimer = metrics
-				.timer("test-timer");
+        final Histogram responseSizes = metrics.histogram("response-sizes");
+        final com.codahale.metrics.Timer metricsTimer = metrics.timer("test-timer");
 
-		timer.schedule(new TimerTask() {
-			int i = 100;
+        timer.schedule(new TimerTask() {
+            int i = 100;
 
-			@Override
-			public void run() {
-				Context context = metricsTimer.time();
-				try {
-					TimeUnit.MILLISECONDS.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				responseSizes.update(i++);
-				context.stop();
-			}
+            @Override
+            public void run() {
+                Context context = metricsTimer.time();
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                responseSizes.update(i++);
+                context.stop();
+            }
 
-		}, 1000, 1000);
+        }, 1000, 1000);
 
-		reporter.start(5, TimeUnit.SECONDS);
+        reporter.start(5, TimeUnit.SECONDS);
 
-		String hostName = "localhost";
-		String topic = "test-kafka-reporter";
-		Properties props = new Properties();
-		props.put("metadata.broker.list", "127.0.0.1:9092");
-		props.put("serializer.class", "kafka.serializer.StringEncoder");
-		props.put("partitioner.class", "kafka.producer.DefaultPartitioner");
-		props.put("request.required.acks", "1");
+        String hostName = "localhost";
+        String topic = "test-kafka-reporter";
+        Properties config = new Properties();
+        config.put("metadata.broker.list", "127.0.0.1:9092");
+        config.put("serializer.class", "kafka.serializer.StringEncoder");
+        config.put("partitioner.class", "kafka.producer.DefaultPartitioner");
+        config.put("request.required.acks", "1");
 
-		String prefix = "test.";
-		ProducerConfig config = new ProducerConfig(props);
-		KafkaReporter kafkaReporter = KafkaReporter.forRegistry(metrics)
-				.config(config).topic(topic).hostName(hostName).prefix(prefix).build();
+        String prefix = "test.";
+        KafkaReporter kafkaReporter =
+                KafkaReporter.forRegistry(metrics).config(config).topic(topic).hostName(hostName).prefix(prefix)
+                        .build();
 
-		kafkaReporter.start(1, TimeUnit.SECONDS);
+        kafkaReporter.start(1, TimeUnit.SECONDS);
 
-		TimeUnit.SECONDS.sleep(500);
-	}
+        TimeUnit.SECONDS.sleep(500);
+    }
 }

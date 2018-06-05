@@ -8,25 +8,25 @@ import com.ryantenney.metrics.annotation.Counted;
 
 public class AnnotationObject {
 
-	Random random = new Random();
+    Random random = new Random();
 
-	/**
-	 * stat call times and time.
-	 */
-	@Timed
-	public void call() {
-		try {
-			TimeUnit.MILLISECONDS.sleep(random.nextInt(3000));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * stat user login times.
-	 */
-	@Counted
-	public void userLogin(){
-		
-	}
+    /**
+     * stat call times and time.
+     */
+    @Timed
+    public void call() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(random.nextInt(3000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * stat user login times.
+     */
+    @Counted
+    public void userLogin() {
+
+    }
 }

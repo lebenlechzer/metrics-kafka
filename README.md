@@ -6,6 +6,9 @@ https://github.com/dropwizard/metrics
 
 Report json metrics data to kafka. Kafka comsumer can process metrics data.
 
+# Version 0.0.2
+
+Use an updated Kafka Java API and remove the metrics consumer.
 
 ## Example
 
@@ -265,50 +268,6 @@ The json send to kafka will like this:
         }
     },
     "ip": "192.158.1.113"
-}
-```
-
-### KafkaConsumer
-
-```java
-import java.io.IOException;
-
-import io.github.hengyunabc.metrics.MessageListener;
-import io.github.hengyunabc.metrics.MetricsKafkaConsumer;
-
-public class MetricsKafkaConsumerSample {
-
-	String zookeeper;
-	String topic;
-	String group;
-
-	MetricsKafkaConsumer consumer;
-
-	public static void main(String[] args) throws IOException {
-
-		String zookeeper = "localhost:2181";
-		String topic = "test-kafka-reporter";
-		String group = "consumer-test";
-
-		MetricsKafkaConsumer consumer = new MetricsKafkaConsumer();
-
-		consumer = new MetricsKafkaConsumer();
-		consumer.setZookeeper(zookeeper);
-		consumer.setTopic(topic);
-		consumer.setGroup(group);
-		consumer.setMessageListener(new MessageListener() {
-
-			@Override
-			public void onMessage(String message) {
-				System.err.println(message);
-			}
-		});
-		consumer.init();
-
-		System.in.read();
-
-		consumer.desotry();
-	}
 }
 ```
 
