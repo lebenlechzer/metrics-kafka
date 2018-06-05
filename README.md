@@ -80,9 +80,8 @@ public class KafkaReporterSample {
 		props.put("request.required.acks", "1");
 
 		String prefix = "test.";
-		ProducerConfig config = new ProducerConfig(props);
 		KafkaReporter kafkaReporter = KafkaReporter.forRegistry(metrics)
-				.config(config).topic(topic).hostName(hostName).prefix(prefix).build();
+				.config(props).topic(topic).hostName(hostName).prefix(prefix).build();
 
 		kafkaReporter.start(1, TimeUnit.SECONDS);
 
@@ -270,26 +269,6 @@ The json send to kafka will like this:
     "ip": "192.158.1.113"
 }
 ```
-
-## Maven dependency
-
-```xml
-<dependency>
-    <groupId>io.github.hengyunabc</groupId>
-    <artifactId>metrics-kafka</artifactId>
-    <version>0.0.1</version>
-</dependency>
-```
-
-## Others
-
-https://github.com/hengyunabc/zabbix-api
-
-https://github.com/hengyunabc/zabbix-sender
-
-https://github.com/hengyunabc/metrics-zabbix
-
-https://github.com/hengyunabc/kafka-zabbix
 
 ## License
 
